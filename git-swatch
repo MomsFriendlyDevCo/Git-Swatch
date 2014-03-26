@@ -11,9 +11,11 @@ if [[ "$?" == 0 && -n "$DIR" ]]; then
 
 	echo "Watching $PROFILE..."
 	while true; do
+		HEAD=`git rev-list HEAD -n 1`
 		git pull
-		if [ "$?" == 0 ]; then
-			echo "Git returned success. Retrigger sitecopy..."
+		NEWHEAD=`git rev-list HEAD -n 1`
+		if [ "$HEAD" != "$NEWHEAD" ]; then
+			echo "Git HEAD changed. Retrigger sitecopy..."
 			sitecopy -uok "$PROFILE"
 			echo "Finished sitesync"
 			echo "Watching $PROFILE..."
