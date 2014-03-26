@@ -5,7 +5,7 @@
 PROFILE="$1"
 DIR=`sitecopy -v "$PROFILE" | grep 'Local directory' | cut -d: -f2`
 if [[ "$?" == 0 && -n "$DIR" ]]; then
-	cd $DIR
+	cd "$DIR"
 	echo "Triggering initial sitecopy..."
 	sitecopy -uok "$PROFILE"
 
