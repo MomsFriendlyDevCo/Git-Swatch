@@ -1,0 +1,29 @@
+#!/bin/bash
+# git swatch <sitecopy-profile>
+# Watch a git profile and run sitecopy when any changes are detected
+
+PROFILE="$1"
+DIR=`sitecopy -v "$PROFILE" | grep 'Local directory' | cut -d: -f2`
+if [[ "$?" == 0 && -n "$DIR" ]]; then
+	cd $DIR
+	echo "Triggering initial sitecopy..."
+	sitecopy -uok "$PROFILE"
+
+	echo "Watching $PROFILE..."
+	while true; do
+		git pull
+		if [ "$?" == 0 ]; then
+			echo "Git returned success. Retrigger sitecopy..."
+			sitecopy -uok "$PROFILE"
+			echo "Finished sitesync"
+			echo "Watching $PROFILE..."
+		fi
+		sleep 10m
+	done
+elif [ -z "$PROFILE" ]; then
+	echo "No sitecopy profile specified"
+	exit 1
+else
+	echo "Unknown sitecopy profile: $PROFILE"
+	exit 1
+fi
