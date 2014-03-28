@@ -3,9 +3,13 @@
 # Watch a git profile and run sitecopy when any changes are detected
 
 PROFILE="$1"
-DIR=`sitecopy -v "$PROFILE" | grep 'Local directory' | cut -d: -f2`
+DIR=`sitecopy -v "$PROFILE" | grep 'Local directory' | cut -d' ' -f3`
 if [[ "$?" == 0 && -n "$DIR" ]]; then
 	cd "$DIR"
+	if [ "$?" != 0 ]; then
+		echo "Unable to change to directory [$DIR]"
+		exit 1
+	fi
 	echo "Triggering initial sitecopy..."
 	sitecopy -uok "$PROFILE"
 
